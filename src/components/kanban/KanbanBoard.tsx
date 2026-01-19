@@ -4,7 +4,7 @@ import { useEffect, useCallback } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { KanbanColumn } from './KanbanColumn';
 import { ArchiveSection } from './ArchiveSection';
-import { useKanbanBoard } from '@/hooks/useKanbanBoard';
+import { useKanbanBoardSupabase } from '@/hooks/useKanbanBoardSupabase';
 import { ColumnId } from '@/types';
 
 const COLUMNS: { id: ColumnId; title: string }[] = [
@@ -14,7 +14,7 @@ const COLUMNS: { id: ColumnId; title: string }[] = [
 ];
 
 export function KanbanBoard() {
-  const { cards, isHydrated, addCard, deleteCard, archiveCard, unarchiveCard, moveCard, getColumnCards, getArchivedCards } = useKanbanBoard();
+  const { cards, isLoading, addCard, deleteCard, archiveCard, unarchiveCard, moveCard, getColumnCards, getArchivedCards } = useKanbanBoardSupabase();
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
@@ -74,7 +74,7 @@ export function KanbanBoard() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  if (!isHydrated) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         {COLUMNS.map((column) => (

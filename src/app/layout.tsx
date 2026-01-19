@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, JetBrains_Mono } from "next/font/google";
+import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
 const displayFont = DM_Serif_Display({
@@ -16,8 +17,8 @@ const monoFont = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Project Manager",
-  description: "A refined productivity workspace for focused work",
+  title: "B2I - Busy to Intentional",
+  description: "A refined productivity workspace for intentional work",
 };
 
 export default function RootLayout({
@@ -27,7 +28,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${displayFont.variable} ${monoFont.variable}`}>
-      <body className="noise-texture">{children}</body>
+      <body className="noise-texture">
+        <AuthProvider>{children}</AuthProvider>
+      </body>
     </html>
   );
 }

@@ -2,12 +2,12 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
-import { useChecklist } from '@/hooks/useChecklist';
+import { useChecklistSupabase } from '@/hooks/useChecklistSupabase';
 import { ChecklistItem } from './ChecklistItem';
 import { cn } from '@/lib/utils';
 
 export function ShutdownChecklist() {
-  const { items, isHydrated, toggleItem, addItem, removeItem, resetAll, reorderItems } = useChecklist();
+  const { items, isLoading, toggleItem, addItem, removeItem, resetAll, reorderItems } = useChecklistSupabase();
   const [isAdding, setIsAdding] = useState(false);
   const [newItemLabel, setNewItemLabel] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -44,7 +44,7 @@ export function ShutdownChecklist() {
   const progress = items.length > 0 ? (completedCount / items.length) * 100 : 0;
   const isComplete = progress === 100;
 
-  if (!isHydrated) {
+  if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-column h-full animate-pulse">
         <div className="p-5 border-b border-sand/30">

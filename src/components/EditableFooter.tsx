@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useSettings } from '@/hooks/useSettings';
+import { useSettingsSupabase } from '@/hooks/useSettingsSupabase';
 import { cn } from '@/lib/utils';
 
 export function EditableFooter() {
-  const { settings, isHydrated, updateFooterMessage } = useSettings();
+  const { settings, isLoading, updateFooterMessage } = useSettingsSupabase();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -43,7 +43,7 @@ export function EditableFooter() {
     }
   };
 
-  if (!isHydrated) {
+  if (isLoading) {
     return (
       <footer className="mt-12 pt-6 border-t border-sand/50">
         <div className="h-4 w-3/4 mx-auto bg-linen rounded animate-pulse" />

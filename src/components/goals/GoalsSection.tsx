@@ -1,12 +1,12 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useGoals } from '@/hooks/useGoals';
+import { useGoalsSupabase } from '@/hooks/useGoalsSupabase';
 import { GoalItem } from './GoalItem';
 import { cn } from '@/lib/utils';
 
 export function GoalsSection() {
-  const { goals, isHydrated, addGoal, toggleGoal, deleteGoal } = useGoals();
+  const { goals, isLoading, addGoal, toggleGoal, deleteGoal } = useGoalsSupabase();
   const [isAdding, setIsAdding] = useState(false);
   const [newGoalTitle, setNewGoalTitle] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -35,7 +35,7 @@ export function GoalsSection() {
 
   const currentYear = new Date().getFullYear();
 
-  if (!isHydrated) {
+  if (isLoading) {
     return (
       <div className="bg-white rounded-lg shadow-column p-6 animate-pulse">
         <div className="h-7 w-48 bg-linen rounded mb-6" />
