@@ -13,14 +13,13 @@ const DEFAULT_ITEMS: ChecklistItem[] = [
   { id: 'default-3', label: 'Review last week calendar - Notebook', isChecked: false, isDefault: true },
   { id: 'default-4', label: 'Review task list and reassign', isChecked: false, isDefault: true },
   { id: 'default-5', label: 'Preview calendar for conflicts', isChecked: false, isDefault: true },
-  { id: 'default-6', label: 'Goal & projects', isChecked: false, isDefault: true },
-  { id: 'default-7', label: 'Review waiting: Does anything need to move to active?', isChecked: false, isDefault: true },
-  { id: 'default-8', label: 'Review active: What is next step? Place on calendar/to-do list', isChecked: false, isDefault: true },
-  { id: 'default-9', label: 'Place "big rocks" on calendar', isChecked: false, isDefault: true },
-  { id: 'default-10', label: 'Schedule Lunch', isChecked: false, isDefault: true },
-  { id: 'default-11', label: 'Schedule workouts', isChecked: false, isDefault: true },
-  { id: 'default-12', label: 'Send A9/ALT call for agenda items', isChecked: false, isDefault: true },
-  { id: 'default-13', label: 'Make weekend list if necessary', isChecked: false, isDefault: true },
+  { id: 'default-6', label: 'Review To Do: Does anything need to move to In Progress?', isChecked: false, isDefault: true },
+  { id: 'default-7', label: 'Review In Progress: What is next step? Place on calendar/to-do list', isChecked: false, isDefault: true },
+  { id: 'default-8', label: 'Place "big rocks" on calendar', isChecked: false, isDefault: true },
+  { id: 'default-9', label: 'Schedule Lunch', isChecked: false, isDefault: true },
+  { id: 'default-10', label: 'Schedule workouts', isChecked: false, isDefault: true },
+  { id: 'default-11', label: 'Send A9/ALT call for agenda items', isChecked: false, isDefault: true },
+  { id: 'default-12', label: 'Make weekend list if necessary', isChecked: false, isDefault: true },
 ];
 
 export function useChecklist() {
@@ -58,6 +57,15 @@ export function useChecklist() {
     setItems(DEFAULT_ITEMS);
   }, [setItems]);
 
+  const reorderItems = useCallback((startIndex: number, endIndex: number) => {
+    setItems(prev => {
+      const result = Array.from(prev);
+      const [removed] = result.splice(startIndex, 1);
+      result.splice(endIndex, 0, removed);
+      return result;
+    });
+  }, [setItems]);
+
   return {
     items,
     isHydrated,
@@ -66,5 +74,6 @@ export function useChecklist() {
     removeItem,
     resetAll,
     resetToDefaults,
+    reorderItems,
   };
 }

@@ -2,7 +2,7 @@
 
 import { useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
-import { KanbanCard, ColumnId } from '@/types';
+import { KanbanCard, ColumnId, Priority } from '@/types';
 import { generateId } from '@/lib/utils';
 
 const STORAGE_KEY = 'kanban-board';
@@ -10,13 +10,15 @@ const STORAGE_KEY = 'kanban-board';
 export function useKanbanBoard() {
   const [cards, setCards, isHydrated] = useLocalStorage<KanbanCard[]>(STORAGE_KEY, []);
 
-  const addCard = useCallback((title: string, columnId: ColumnId = 'todo', description?: string) => {
+  const addCard = useCallback((title: string, columnId: ColumnId = 'todo', dueDate?: string, priority?: Priority) => {
     const newCard: KanbanCard = {
       id: generateId(),
       title,
-      description,
       columnId,
       createdAt: new Date().toISOString(),
+      dueDate,
+      priority,
+      isArchived: false,
     };
     setCards(prev => [...prev, newCard]);
   }, [setCards]);
@@ -31,6 +33,22 @@ export function useKanbanBoard() {
 
   const deleteCard = useCallback((id: string) => {
     setCards(prev => prev.filter(card => card.id !== id));
+  }, [setCards]);
+
+  const archiveCard = useCallback((id: string) => {
+    setCards(prev =>
+      prev.map(card =>
+        card.id === id ? { ...card, isArchived: true } : card
+      )
+    );
+  }, [setCards]);
+
+  const unarchiveCard = useCallback((id: string) => {
+    setCards(prev =>
+      prev.map(card =>
+        card.id === id ? { ...card, isArchived: false } : card
+      )
+    );
   }, [setCards]);
 
   const moveCard = useCallback((cardId: string, targetColumnId: ColumnId, targetIndex?: number) => {
@@ -62,7 +80,11 @@ export function useKanbanBoard() {
   }, [setCards]);
 
   const getColumnCards = useCallback((columnId: ColumnId): KanbanCard[] => {
-    return cards.filter(card => card.columnId === columnId);
+    return cards.filter(card => card.columnId === columnId && !card.isArchived);
+  }, [cards]);
+
+  const getArchivedCards = useCallback((): KanbanCard[] => {
+    return cards.filter(card => card.isArchived);
   }, [cards]);
 
   return {
@@ -71,7 +93,10 @@ export function useKanbanBoard() {
     addCard,
     updateCard,
     deleteCard,
+    archiveCard,
+    unarchiveCard,
     moveCard,
     getColumnCards,
+    getArchivedCards,
   };
 }

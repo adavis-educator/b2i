@@ -1,15 +1,26 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { Priority } from '@/types';
 import { cn } from '@/lib/utils';
 
 interface AddCardFormProps {
-  onAdd: (title: string) => void;
+  onAdd: (title: string, dueDate?: string, priority?: Priority) => void;
+  columnId?: string;
 }
 
-export function AddCardForm({ onAdd }: AddCardFormProps) {
+const priorityOptions: { value: Priority | ''; label: string; color: string }[] = [
+  { value: '', label: 'No priority', color: 'bg-sand' },
+  { value: 'low', label: 'Low', color: 'bg-sage' },
+  { value: 'medium', label: 'Medium', color: 'bg-amber' },
+  { value: 'high', label: 'High', color: 'bg-rose' },
+];
+
+export function AddCardForm({ onAdd, columnId = 'todo' }: AddCardFormProps) {
   const [isAdding, setIsAdding] = useState(false);
   const [title, setTitle] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [priority, setPriority] = useState<Priority | ''>('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -21,14 +32,18 @@ export function AddCardForm({ onAdd }: AddCardFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim()) {
-      onAdd(title.trim());
+      onAdd(title.trim(), dueDate || undefined, priority || undefined);
       setTitle('');
+      setDueDate('');
+      setPriority('');
       setIsAdding(false);
     }
   };
 
   const handleCancel = () => {
     setTitle('');
+    setDueDate('');
+    setPriority('');
     setIsAdding(false);
   };
 
@@ -42,11 +57,12 @@ export function AddCardForm({ onAdd }: AddCardFormProps) {
     return (
       <button
         onClick={() => setIsAdding(true)}
+        data-add-card-button={columnId}
         className={cn(
           'w-full py-2.5 px-3 font-mono text-xs uppercase tracking-wider',
-          'text-muted hover:text-cream hover:bg-slate/30',
-          'border border-dashed border-slate/30 hover:border-amber/30',
-          'transition-all duration-200',
+          'text-muted hover:text-ink hover:bg-white/80',
+          'border border-dashed border-sand hover:border-amber/40',
+          'rounded-lg transition-all duration-200',
           'flex items-center justify-center gap-2'
         )}
       >
@@ -73,20 +89,63 @@ export function AddCardForm({ onAdd }: AddCardFormProps) {
         onKeyDown={handleKeyDown}
         placeholder="Task title..."
         className={cn(
-          'w-full px-4 py-3 text-sm text-cream bg-graphite',
-          'border border-slate/40 focus:border-amber/50',
-          'focus:outline-none focus:ring-1 focus:ring-amber/30',
+          'w-full px-4 py-3 text-sm text-ink bg-white',
+          'border border-sand rounded-lg',
+          'focus:border-amber focus:outline-none focus:ring-1 focus:ring-amber/30',
           'placeholder:text-muted font-mono',
           'transition-all duration-200'
         )}
       />
+
+      {/* Priority and Due Date row */}
+      <div className="flex items-center gap-2">
+        {/* Priority selector */}
+        <div className="flex items-center gap-1.5">
+          <span className="font-mono text-2xs uppercase tracking-wider text-muted">Priority</span>
+          <div className="flex gap-1">
+            {priorityOptions.map((option) => (
+              <button
+                key={option.value || 'none'}
+                type="button"
+                onClick={() => setPriority(option.value)}
+                className={cn(
+                  'w-5 h-5 rounded-full border-2 transition-all duration-200',
+                  option.color,
+                  priority === option.value
+                    ? 'border-ink scale-110'
+                    : 'border-transparent opacity-50 hover:opacity-100'
+                )}
+                title={option.label}
+                aria-label={`Set priority to ${option.label}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Due Date Input */}
+        <div className="flex-1 flex items-center gap-1.5">
+          <span className="font-mono text-2xs uppercase tracking-wider text-muted">Due</span>
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className={cn(
+              'flex-1 px-2 py-1.5 text-xs text-ink bg-white font-mono',
+              'border border-sand rounded',
+              'focus:border-amber focus:outline-none focus:ring-1 focus:ring-amber/30',
+              'transition-all duration-200'
+            )}
+          />
+        </div>
+      </div>
+
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={!title.trim()}
           className={cn(
             'flex-1 px-4 py-2 font-mono text-xs uppercase tracking-wider',
-            'bg-amber text-void hover:bg-honey',
+            'bg-amber text-white rounded-lg hover:bg-gold',
             'disabled:opacity-40 disabled:cursor-not-allowed',
             'transition-all duration-200'
           )}
@@ -98,8 +157,8 @@ export function AddCardForm({ onAdd }: AddCardFormProps) {
           onClick={handleCancel}
           className={cn(
             'px-4 py-2 font-mono text-xs uppercase tracking-wider',
-            'text-stone hover:text-cream hover:bg-slate/50',
-            'border border-slate/30 hover:border-slate/50',
+            'text-stone hover:text-ink hover:bg-linen',
+            'border border-sand rounded-lg hover:border-stone/30',
             'transition-all duration-200'
           )}
         >

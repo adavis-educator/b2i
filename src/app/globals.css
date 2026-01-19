@@ -3,34 +3,35 @@
 @tailwind utilities;
 
 :root {
-  /* Dark Editorial Luxe Color System */
-  --color-void: #0a0a0a;
-  --color-charcoal: #121212;
-  --color-graphite: #1a1a1a;
-  --color-slate: #252525;
-  --color-ash: #333333;
+  /* Light Editorial Luxe Color System */
+  --color-white: #ffffff;
+  --color-snow: #fafaf9;
+  --color-cream: #f5f2ed;
+  --color-linen: #ebe7e0;
+  --color-sand: #d4d0c8;
 
-  --color-cream: #f5f0e8;
-  --color-parchment: #e8e0d4;
-  --color-stone: #9a9590;
-  --color-muted: #6b6560;
+  --color-ink: #1a1a1a;
+  --color-charcoal: #2d2d2d;
+  --color-graphite: #4a4a4a;
+  --color-stone: #6b6b6b;
+  --color-muted: #9a9a9a;
 
-  --color-amber: #d4a574;
-  --color-gold: #c49a6c;
-  --color-honey: #e8c49a;
+  --color-amber: #b8860b;
+  --color-gold: #996515;
+  --color-honey: #daa520;
 
-  --color-sage: #7d9a7d;
-  --color-emerald: #4a7c59;
+  --color-sage: #5a7c5a;
+  --color-emerald: #3d6b4f;
 
-  --color-rose: #c47d7d;
-  --color-coral: #d4847a;
+  --color-rose: #b35959;
+  --color-coral: #c76a5e;
 
-  --color-sky: #7d9aad;
-  --color-azure: #5a7c99;
+  --color-sky: #5a7c99;
+  --color-azure: #4a6d8a;
 }
 
 * {
-  border-color: rgba(37, 37, 37, 0.3);
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
 html {
@@ -40,18 +41,18 @@ html {
 }
 
 body {
-  background-color: var(--color-void);
-  color: var(--color-cream);
+  background-color: var(--color-cream);
+  color: var(--color-ink);
   font-feature-settings: "rlig" 1, "calt" 1, "kern" 1;
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background-color: rgba(212, 165, 116, 0.3);
-  color: var(--color-cream);
+  background-color: rgba(184, 134, 11, 0.2);
+  color: var(--color-ink);
 }
 
-/* Elegant Noise Texture Overlay */
+/* Subtle Paper Texture Overlay */
 .noise-texture::before {
   content: '';
   position: fixed;
@@ -59,7 +60,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.015;
+  opacity: 0.02;
   pointer-events: none;
   z-index: 9999;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
@@ -72,23 +73,23 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-charcoal);
+  background: var(--color-linen);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-ash);
+  background: var(--color-sand);
   border-radius: 4px;
-  border: 2px solid var(--color-charcoal);
+  border: 2px solid var(--color-linen);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-muted);
+  background: var(--color-stone);
 }
 
 /* Focus Styles - Gold Ring */
 *:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px var(--color-void), 0 0 0 4px var(--color-amber);
+  box-shadow: 0 0 0 2px var(--color-white), 0 0 0 4px var(--color-amber);
 }
 
 /* Checkbox Styles - Elegant Gold */
@@ -96,18 +97,18 @@ input[type="checkbox"] {
   appearance: none;
   cursor: pointer;
   transition: all 0.2s ease;
-  border: 2px solid rgba(154, 149, 144, 0.4);
-  background: transparent;
+  border: 2px solid var(--color-sand);
+  background: var(--color-white);
 }
 
 input[type="checkbox"]:hover {
-  border-color: rgba(212, 165, 116, 0.6);
+  border-color: var(--color-amber);
 }
 
 input[type="checkbox"]:checked {
   border-color: var(--color-amber);
   background-color: var(--color-amber);
-  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%230a0a0a' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='%23ffffff' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
   background-size: 100% 100%;
   background-position: center;
   background-repeat: no-repeat;
@@ -141,21 +142,12 @@ input[type="checkbox"]:checked {
   to { opacity: 1; }
 }
 
-@keyframes subtle-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
 .animate-fade-in-up {
   animation: fade-in-up 0.5s ease-out forwards;
 }
 
 .animate-fade-in {
   animation: fade-in 0.4s ease-out forwards;
-}
-
-.animate-subtle-pulse {
-  animation: subtle-pulse 2s ease-in-out infinite;
 }
 
 /* Stagger delays */
@@ -168,38 +160,36 @@ input[type="checkbox"]:checked {
 /* Decorative Elements */
 .decorative-line {
   height: 1px;
-  background: linear-gradient(to right, transparent, rgba(212, 165, 116, 0.4), transparent);
-}
-
-.decorative-border {
-  border: 1px solid rgba(212, 165, 116, 0.2);
-  box-shadow: inset 0 0 20px rgba(212, 165, 116, 0.03);
+  background: linear-gradient(to right, transparent, rgba(184, 134, 11, 0.3), transparent);
 }
 
 /* Progress Bar Styling */
 .progress-bar-track {
   height: 4px;
-  background-color: var(--color-slate);
+  background-color: var(--color-linen);
   border-radius: 9999px;
   overflow: hidden;
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: linear-gradient(to right, var(--color-amber), var(--color-gold));
+  background: linear-gradient(to right, var(--color-amber), var(--color-honey));
   border-radius: 9999px;
   transition: all 0.5s ease-out;
 }
 
-/* Column accent lines */
-.column-accent-todo {
-  border-left: 2px solid rgba(154, 149, 144, 0.4);
+/* Column styles */
+.column-todo {
+  background: linear-gradient(180deg, #f8f7f4 0%, #f5f3ef 100%);
+  border-top: 3px solid var(--color-stone);
 }
 
-.column-accent-progress {
-  border-left: 2px solid var(--color-azure);
+.column-progress {
+  background: linear-gradient(180deg, #f5f8fa 0%, #eef3f7 100%);
+  border-top: 3px solid var(--color-azure);
 }
 
-.column-accent-complete {
-  border-left: 2px solid var(--color-sage);
+.column-complete {
+  background: linear-gradient(180deg, #f5f8f5 0%, #eff5f0 100%);
+  border-top: 3px solid var(--color-sage);
 }

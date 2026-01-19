@@ -34,15 +34,14 @@ export function GoalsSection() {
   };
 
   const currentYear = new Date().getFullYear();
-  const completedCount = goals.filter(g => g.isCompleted).length;
 
   if (!isHydrated) {
     return (
-      <div className="bg-charcoal border border-slate/30 p-6 animate-pulse">
-        <div className="h-7 w-48 bg-slate/50 mb-6" />
+      <div className="bg-white rounded-lg shadow-column p-6 animate-pulse">
+        <div className="h-7 w-48 bg-linen rounded mb-6" />
         <div className="flex gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-14 w-48 bg-slate/20" />
+            <div key={i} className="h-14 w-48 bg-linen/50 rounded-lg" />
           ))}
         </div>
       </div>
@@ -50,25 +49,18 @@ export function GoalsSection() {
   }
 
   return (
-    <div className="bg-charcoal border border-slate/30 p-6">
+    <div className="bg-white rounded-lg shadow-column p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <h2 className="font-display text-2xl text-cream">
-            {currentYear} Goals
-          </h2>
-          {goals.length > 0 && (
-            <span className="font-mono text-2xs px-3 py-1 bg-amber/10 text-amber">
-              {completedCount}/{goals.length} achieved
-            </span>
-          )}
-        </div>
+        <h2 className="font-display text-2xl text-ink">
+          {currentYear} Goals
+        </h2>
         {!isAdding && goals.length > 0 && (
           <button
             onClick={() => setIsAdding(true)}
             className={cn(
               'px-4 py-2 font-mono text-xs uppercase tracking-wider',
-              'text-amber hover:bg-amber/10 border border-amber/30',
+              'text-amber hover:bg-amber/10 border border-amber/30 rounded-lg',
               'transition-all duration-200',
               'flex items-center gap-2'
             )}
@@ -88,13 +80,13 @@ export function GoalsSection() {
 
       {/* Goals grid or empty state */}
       {goals.length === 0 && !isAdding ? (
-        <div className="py-12 text-center border border-dashed border-slate/30">
+        <div className="py-12 text-center border border-dashed border-sand rounded-lg">
           <p className="font-mono text-sm text-muted mb-4">No goals set for {currentYear}</p>
           <button
             onClick={() => setIsAdding(true)}
             className={cn(
               'px-6 py-3 font-mono text-xs uppercase tracking-wider',
-              'bg-amber text-void hover:bg-honey',
+              'bg-amber text-white rounded-lg hover:bg-gold',
               'transition-all duration-200'
             )}
           >
@@ -123,9 +115,9 @@ export function GoalsSection() {
                 onKeyDown={handleKeyDown}
                 placeholder="Enter goal..."
                 className={cn(
-                  'px-4 py-3 text-sm text-cream bg-graphite w-64 font-mono',
-                  'border border-slate/40 focus:border-amber/50',
-                  'focus:outline-none focus:ring-1 focus:ring-amber/30',
+                  'px-4 py-3 text-sm text-ink bg-snow w-64 font-mono',
+                  'border border-sand rounded-lg',
+                  'focus:border-amber focus:outline-none focus:ring-1 focus:ring-amber/30',
                   'placeholder:text-muted',
                   'transition-all duration-200'
                 )}
@@ -134,7 +126,7 @@ export function GoalsSection() {
                 type="submit"
                 disabled={!newGoalTitle.trim()}
                 className={cn(
-                  'p-3 bg-amber text-void hover:bg-honey',
+                  'p-3 bg-amber text-white rounded-lg hover:bg-gold',
                   'disabled:opacity-40 disabled:cursor-not-allowed',
                   'transition-all duration-200'
                 )}
@@ -160,8 +152,8 @@ export function GoalsSection() {
                   setIsAdding(false);
                 }}
                 className={cn(
-                  'p-3 text-muted hover:text-cream hover:bg-slate/30',
-                  'border border-slate/30',
+                  'p-3 text-muted hover:text-ink hover:bg-linen rounded-lg',
+                  'border border-sand',
                   'transition-all duration-200'
                 )}
                 aria-label="Cancel"

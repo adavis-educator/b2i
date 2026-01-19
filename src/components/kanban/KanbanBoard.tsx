@@ -1,18 +1,20 @@
 'use client';
 
+import { useEffect, useCallback } from 'react';
 import { DragDropContext, DropResult } from '@hello-pangea/dnd';
 import { KanbanColumn } from './KanbanColumn';
+import { ArchiveSection } from './ArchiveSection';
 import { useKanbanBoard } from '@/hooks/useKanbanBoard';
 import { ColumnId } from '@/types';
 
-const COLUMNS: { id: ColumnId; title: string; subtitle: string }[] = [
-  { id: 'todo', title: 'To Do', subtitle: 'Queued tasks' },
-  { id: 'in-progress', title: 'In Progress', subtitle: 'Active work' },
-  { id: 'complete', title: 'Complete', subtitle: 'Finished' },
+const COLUMNS: { id: ColumnId; title: string }[] = [
+  { id: 'todo', title: 'To Do' },
+  { id: 'in-progress', title: 'In Progress' },
+  { id: 'complete', title: 'Complete' },
 ];
 
 export function KanbanBoard() {
-  const { cards, isHydrated, addCard, deleteCard, moveCard, getColumnCards } = useKanbanBoard();
+  const { cards, isHydrated, addCard, deleteCard, archiveCard, unarchiveCard, moveCard, getColumnCards, getArchivedCards } = useKanbanBoard();
 
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, draggableId } = result;
@@ -29,27 +31,63 @@ export function KanbanBoard() {
     moveCard(draggableId, destination.droppableId as ColumnId, destination.index);
   };
 
+  // Keyboard shortcuts
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Don't trigger shortcuts when typing in inputs
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      return;
+    }
+
+    // 'N' - Focus on first Add Task button (todo column)
+    if (e.key === 'n' || e.key === 'N') {
+      e.preventDefault();
+      const addButton = document.querySelector('[data-add-card-button="todo"]') as HTMLButtonElement;
+      addButton?.click();
+    }
+
+    // '1', '2', '3' - Focus add button for specific column
+    if (e.key === '1') {
+      e.preventDefault();
+      const addButton = document.querySelector('[data-add-card-button="todo"]') as HTMLButtonElement;
+      addButton?.click();
+    }
+    if (e.key === '2') {
+      e.preventDefault();
+      const addButton = document.querySelector('[data-add-card-button="in-progress"]') as HTMLButtonElement;
+      addButton?.click();
+    }
+    if (e.key === '3') {
+      e.preventDefault();
+      const addButton = document.querySelector('[data-add-card-button="complete"]') as HTMLButtonElement;
+      addButton?.click();
+    }
+
+    // '?' - Show keyboard shortcuts help (could expand this later)
+    if (e.key === '?') {
+      e.preventDefault();
+      alert('Keyboard Shortcuts:\n\nN or 1 - Add task to To Do\n2 - Add task to In Progress\n3 - Add task to Complete\nEsc - Cancel/Close forms');
+    }
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
   if (!isHydrated) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-        {COLUMNS.map((column, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+        {COLUMNS.map((column) => (
           <div
             key={column.id}
-            className={`
-              bg-charcoal border border-slate/30 min-h-[450px]
-              animate-pulse
-              ${index === 0 ? 'column-accent-todo' : ''}
-              ${index === 1 ? 'column-accent-progress' : ''}
-              ${index === 2 ? 'column-accent-complete' : ''}
-            `}
+            className="bg-white rounded-lg shadow-column min-h-[400px] animate-pulse"
           >
-            <div className="p-4 border-b border-slate/20">
-              <div className="h-5 w-20 bg-slate/50 mb-2" />
-              <div className="h-3 w-28 bg-slate/30" />
+            <div className="p-4 border-b border-sand/30">
+              <div className="h-5 w-20 bg-linen rounded" />
             </div>
             <div className="p-3 space-y-3">
-              <div className="h-20 bg-slate/20" />
-              <div className="h-20 bg-slate/20" />
+              <div className="h-20 bg-linen/50 rounded-lg" />
+              <div className="h-20 bg-linen/50 rounded-lg" />
             </div>
           </div>
         ))}
@@ -59,19 +97,24 @@ export function KanbanBoard() {
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
         {COLUMNS.map((column) => (
           <KanbanColumn
             key={column.id}
             id={column.id}
             title={column.title}
-            subtitle={column.subtitle}
             cards={getColumnCards(column.id)}
             onAddCard={addCard}
             onDeleteCard={deleteCard}
+            onArchiveCard={archiveCard}
           />
         ))}
       </div>
+      <ArchiveSection
+        archivedCards={getArchivedCards()}
+        onRestore={unarchiveCard}
+        onDelete={deleteCard}
+      />
     </DragDropContext>
   );
 }

@@ -14,17 +14,17 @@ export function GoalItem({ goal, index, onToggle, onDelete }: GoalItemProps) {
   return (
     <div
       className={cn(
-        'group relative flex items-center gap-4 px-5 py-4 border transition-all duration-300',
+        'group relative flex items-center gap-4 px-5 py-4 rounded-lg border transition-all duration-300',
         'animate-fade-in-up opacity-0',
         goal.isCompleted
-          ? 'bg-sage/10 border-sage/30'
-          : 'bg-graphite border-slate/40 hover:border-amber/30 hover:shadow-card'
+          ? 'bg-sage/5 border-sage/30'
+          : 'bg-white border-sand hover:border-amber/40 hover:shadow-card'
       )}
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Achievement indicator */}
       {goal.isCompleted && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-sage" />
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-sage rounded-l-lg" />
       )}
 
       <input
@@ -37,7 +37,7 @@ export function GoalItem({ goal, index, onToggle, onDelete }: GoalItemProps) {
           'cursor-pointer transition-all duration-200',
           goal.isCompleted
             ? 'border-sage bg-sage'
-            : 'border-stone/50'
+            : 'border-sand'
         )}
       />
       <label
@@ -46,7 +46,7 @@ export function GoalItem({ goal, index, onToggle, onDelete }: GoalItemProps) {
           'flex-1 text-sm font-medium cursor-pointer select-none transition-all duration-200',
           goal.isCompleted
             ? 'text-sage line-through'
-            : 'text-cream'
+            : 'text-ink'
         )}
       >
         {goal.title}
@@ -56,7 +56,7 @@ export function GoalItem({ goal, index, onToggle, onDelete }: GoalItemProps) {
       <button
         onClick={() => onDelete(goal.id)}
         className={cn(
-          'opacity-0 group-hover:opacity-100 p-2',
+          'opacity-0 group-hover:opacity-100 p-2 rounded',
           'text-muted hover:text-rose hover:bg-rose/10',
           'transition-all duration-200'
         )}
