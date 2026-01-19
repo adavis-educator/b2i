@@ -49,52 +49,46 @@ export function GoalsSection() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-column p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-display text-2xl text-ink">
-          {currentYear} Goals
-        </h2>
-        {!isAdding && goals.length > 0 && (
+    <div className="bg-white rounded-lg shadow-column p-4">
+      {/* Compact Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h2 className="font-mono text-xs uppercase tracking-wider text-stone">
+            Annual Goals
+          </h2>
+          <div className="h-4 w-px bg-sand" />
+          <span className="font-mono text-2xs text-muted">{goals.length} goals</span>
+        </div>
+        {!isAdding && (
           <button
             onClick={() => setIsAdding(true)}
             className={cn(
-              'px-4 py-2 font-mono text-xs uppercase tracking-wider',
-              'text-amber hover:bg-amber/10 border border-amber/30 rounded-lg',
+              'px-3 py-1.5 font-mono text-2xs uppercase tracking-wider',
+              'text-amber hover:bg-amber/10 border border-amber/30 rounded',
               'transition-all duration-200',
-              'flex items-center gap-2'
+              'flex items-center gap-1.5'
             )}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
               fill="currentColor"
-              className="w-4 h-4"
+              className="w-3 h-3"
             >
               <path d="M8.75 3.75a.75.75 0 00-1.5 0v3.5h-3.5a.75.75 0 000 1.5h3.5v3.5a.75.75 0 001.5 0v-3.5h3.5a.75.75 0 000-1.5h-3.5v-3.5z" />
             </svg>
-            New Goal
+            Add
           </button>
         )}
       </div>
 
-      {/* Goals grid or empty state */}
+      {/* Goals row or empty state */}
       {goals.length === 0 && !isAdding ? (
-        <div className="py-12 text-center border border-dashed border-sand rounded-lg">
-          <p className="font-mono text-sm text-muted mb-4">No goals set for {currentYear}</p>
-          <button
-            onClick={() => setIsAdding(true)}
-            className={cn(
-              'px-6 py-3 font-mono text-xs uppercase tracking-wider',
-              'bg-amber text-white rounded-lg hover:bg-gold',
-              'transition-all duration-200'
-            )}
-          >
-            Set Your First Goal
-          </button>
+        <div className="mt-3 py-6 text-center border border-dashed border-sand rounded-lg">
+          <p className="font-mono text-xs text-muted">No goals yet. Click &quot;Add&quot; to set your first goal.</p>
         </div>
       ) : (
-        <div className="flex flex-wrap gap-4">
+        <div className="mt-3 flex flex-wrap gap-3">
           {goals.map((goal, index) => (
             <GoalItem
               key={goal.id}

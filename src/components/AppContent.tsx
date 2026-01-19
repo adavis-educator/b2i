@@ -3,6 +3,7 @@
 import { useAuth } from '@/context/AuthContext';
 import { LoginScreen } from '@/components/auth/LoginScreen';
 import { UserMenu } from '@/components/auth/UserMenu';
+import { AboutModal } from '@/components/AboutModal';
 import { KanbanBoard } from '@/components/kanban/KanbanBoard';
 import { ShutdownChecklist } from '@/components/checklist/ShutdownChecklist';
 import { GoalsSection } from '@/components/goals/GoalsSection';
@@ -43,7 +44,10 @@ export function AppContent() {
             </span>
             <div className="h-0.5 w-8 bg-amber ml-2" />
           </div>
-          <UserMenu />
+          <div className="flex items-center gap-2">
+            <AboutModal />
+            <UserMenu />
+          </div>
         </header>
 
         {/* Main content: Goals on top, then Kanban + Checklist */}
