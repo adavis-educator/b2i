@@ -152,8 +152,39 @@ export function AboutModal() {
                 </p>
               </section>
 
-              {/* Tips */}
+              {/* Keyboard Shortcuts */}
               <section className="bg-linen/50 rounded-lg p-4">
+                <h3 className="font-mono text-xs uppercase tracking-wider text-stone mb-3">Keyboard Shortcuts</h3>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="flex items-center gap-2">
+                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">N</kbd>
+                    <span className="text-charcoal">Add task to To Do</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">1</kbd>
+                    <span className="text-charcoal">Add task to To Do</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">2</kbd>
+                    <span className="text-charcoal">Add task to In Progress</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">3</kbd>
+                    <span className="text-charcoal">Add task to Complete</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">?</kbd>
+                    <span className="text-charcoal">Show shortcuts help</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">Esc</kbd>
+                    <span className="text-charcoal">Cancel / Close forms</span>
+                  </div>
+                </div>
+              </section>
+
+              {/* Tips */}
+              <section className="bg-linen/50 rounded-lg p-4 mt-4">
                 <h3 className="font-mono text-xs uppercase tracking-wider text-stone mb-3">Tips for Success</h3>
                 <ul className="text-sm text-charcoal leading-relaxed space-y-2">
                   <li className="flex items-start gap-2">
