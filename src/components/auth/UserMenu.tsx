@@ -48,10 +48,10 @@ export function UserMenu() {
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 z-10"
+            className="fixed inset-0 z-[99]"
             onClick={() => setIsOpen(false)}
           />
-          <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-elevated border border-sand/50 z-20 animate-fade-in">
+          <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-elevated border border-sand/50 z-[100] animate-fade-in">
             <div className="p-3 border-b border-sand/50">
               <p className="font-mono text-2xs text-muted truncate">{user.email}</p>
             </div>
