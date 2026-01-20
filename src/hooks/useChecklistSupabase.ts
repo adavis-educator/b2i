@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useAuth } from '@/context/AuthContext';
 import { ChecklistItem } from '@/types';
@@ -25,14 +25,20 @@ export function useChecklistSupabase() {
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const supabase = createClient();
+  const hasInitialized = useRef(false);
 
   // Fetch checklist items
   useEffect(() => {
     if (!user) {
       setItems([]);
       setIsLoading(false);
+      hasInitialized.current = false;
       return;
     }
+
+    // Prevent double-initialization from React StrictMode or fast re-renders
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
 
     const fetchItems = async () => {
       const { data, error } = await supabase
