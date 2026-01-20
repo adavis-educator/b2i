@@ -34,7 +34,7 @@ export function AppContent() {
     <main className="min-h-screen bg-cream">
       <div className="relative max-w-[1800px] mx-auto px-6 py-6 lg:px-10 lg:py-8">
         {/* Compact Header with User Menu */}
-        <header className="mb-6 flex items-center justify-between animate-fade-in-up">
+        <header className="relative z-[100] mb-6 flex items-center justify-between">
           <div className="flex items-baseline gap-3">
             <h1 className="font-display text-3xl text-ink tracking-tight">
               B2I
@@ -51,7 +51,7 @@ export function AppContent() {
         </header>
 
         {/* Main content: Goals on top, then Kanban + Checklist */}
-        <div className="space-y-6">
+        <div className="relative z-0 space-y-6">
           {/* Annual Goals Section - at top for visibility */}
           <section className="animate-fade-in-up stagger-1 opacity-0">
             <GoalsSection />
