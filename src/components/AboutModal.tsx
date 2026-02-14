@@ -161,18 +161,6 @@ export function AboutModal() {
                     <span className="text-charcoal">Add task to To Do</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">1</kbd>
-                    <span className="text-charcoal">Add task to To Do</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">2</kbd>
-                    <span className="text-charcoal">Add task to In Progress</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">3</kbd>
-                    <span className="text-charcoal">Add task to Complete</span>
-                  </div>
-                  <div className="flex items-center gap-2">
                     <kbd className="px-2 py-1 bg-white rounded border border-sand font-mono text-xs">?</kbd>
                     <span className="text-charcoal">Show shortcuts help</span>
                   </div>

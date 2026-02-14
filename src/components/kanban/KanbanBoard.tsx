@@ -45,27 +45,10 @@ export function KanbanBoard() {
       addButton?.click();
     }
 
-    // '1', '2', '3' - Focus add button for specific column
-    if (e.key === '1') {
-      e.preventDefault();
-      const addButton = document.querySelector('[data-add-card-button="todo"]') as HTMLButtonElement;
-      addButton?.click();
-    }
-    if (e.key === '2') {
-      e.preventDefault();
-      const addButton = document.querySelector('[data-add-card-button="in-progress"]') as HTMLButtonElement;
-      addButton?.click();
-    }
-    if (e.key === '3') {
-      e.preventDefault();
-      const addButton = document.querySelector('[data-add-card-button="complete"]') as HTMLButtonElement;
-      addButton?.click();
-    }
-
     // '?' - Show keyboard shortcuts help (could expand this later)
     if (e.key === '?') {
       e.preventDefault();
-      alert('Keyboard Shortcuts:\n\nN or 1 - Add task to To Do\n2 - Add task to In Progress\n3 - Add task to Complete\nEsc - Cancel/Close forms');
+      alert('Keyboard Shortcuts:\n\nN - Add task to To Do\nEsc - Cancel/Close forms');
     }
   }, []);
 
