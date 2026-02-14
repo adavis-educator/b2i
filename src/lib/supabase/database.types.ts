@@ -88,6 +88,76 @@ export interface Database {
           created_at?: string;
         };
       };
+      weekly_checkins: {
+        Row: {
+          id: string;
+          user_id: string;
+          week_of: string;
+          score_body: number | null;
+          score_mind: number | null;
+          score_work: number | null;
+          score_energy: number | null;
+          equanimity_note: string;
+          flag_note: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          week_of: string;
+          score_body?: number | null;
+          score_mind?: number | null;
+          score_work?: number | null;
+          score_energy?: number | null;
+          equanimity_note?: string;
+          flag_note?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          week_of?: string;
+          score_body?: number | null;
+          score_mind?: number | null;
+          score_work?: number | null;
+          score_energy?: number | null;
+          equanimity_note?: string;
+          flag_note?: string;
+          created_at?: string;
+        };
+      };
+      monthly_reviews: {
+        Row: {
+          id: string;
+          user_id: string;
+          month_of: string;
+          trends_note: string;
+          keystone_note: string;
+          next_why_note: string;
+          adjust_note: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          month_of: string;
+          trends_note?: string;
+          keystone_note?: string;
+          next_why_note?: string;
+          adjust_note?: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          month_of?: string;
+          trends_note?: string;
+          keystone_note?: string;
+          next_why_note?: string;
+          adjust_note?: string;
+          created_at?: string;
+        };
+      };
       user_settings: {
         Row: {
           id: string;

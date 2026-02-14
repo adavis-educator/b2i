@@ -35,3 +35,27 @@ export interface Goal {
 export interface BoardState {
   cards: KanbanCard[];
 }
+
+export type FuelRating = 'yes' | 'inconsistently' | 'no';
+
+export interface WeeklyCheckin {
+  id: string;
+  weekOf: string;
+  scoreBody: number | null;
+  scoreMind: number | null;
+  scoreWork: number | null;
+  scoreEnergy: number | null;
+  equanimityNote: string;
+  flagNote: string;
+  createdAt: string;
+}
+
+export interface MonthlyReview {
+  id: string;
+  monthOf: string;
+  trendsNote: string;
+  keystoneNote: string;
+  nextWhyNote: string;
+  adjustNote: string;
+  createdAt: string;
+}

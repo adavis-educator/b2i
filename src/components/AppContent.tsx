@@ -8,9 +8,11 @@ import { KanbanBoard } from '@/components/kanban/KanbanBoard';
 import { ShutdownChecklist } from '@/components/checklist/ShutdownChecklist';
 import { GoalsSection } from '@/components/goals/GoalsSection';
 import { EditableFooter } from '@/components/EditableFooter';
+import { GoalsCheckin } from '@/components/goals-checkin/GoalsCheckin';
 
 export function AppContent() {
   const { user, isLoading } = useAuth();
+  const isOwner = user?.email === 'adavis@mttam.org';
 
   // Show loading state
   if (isLoading) {
@@ -59,9 +61,10 @@ export function AppContent() {
 
           {/* Kanban + Checklist grid */}
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_340px] gap-6 lg:gap-8">
-            {/* Kanban Board */}
-            <section className="animate-fade-in-up stagger-2 opacity-0">
+            {/* Kanban Board + Goals Check-In (owner only) */}
+            <section className="animate-fade-in-up stagger-2 opacity-0 space-y-6">
               <KanbanBoard />
+              {isOwner && <GoalsCheckin />}
             </section>
 
             {/* Friday Shutdown Checklist */}
