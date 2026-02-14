@@ -129,25 +129,33 @@ export function WeeklyCheckin() {
           </div>
         </div>
 
-        {/* Save button */}
-        <div className="pt-3 flex items-center gap-3">
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className={cn(
-              'px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-wider transition-all',
-              isSaving
-                ? 'bg-sand text-muted cursor-not-allowed'
-                : 'bg-amber text-white hover:bg-gold'
+        {/* Save button + Dashboard link */}
+        <div className="pt-3 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className={cn(
+                'px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-wider transition-all',
+                isSaving
+                  ? 'bg-sand text-muted cursor-not-allowed'
+                  : 'bg-amber text-white hover:bg-gold'
+              )}
+            >
+              {isSaving ? 'Saving...' : 'Save Check-In'}
+            </button>
+            {saved && (
+              <span className="font-mono text-2xs text-sage animate-fade-in">
+                Saved
+              </span>
             )}
+          </div>
+          <a
+            href="/dashboard"
+            className="font-mono text-2xs text-muted hover:text-amber uppercase tracking-wider transition-colors"
           >
-            {isSaving ? 'Saving...' : 'Save Check-In'}
-          </button>
-          {saved && (
-            <span className="font-mono text-2xs text-sage animate-fade-in">
-              Saved
-            </span>
-          )}
+            View Dashboard →
+          </a>
         </div>
       </div>
     </div>
