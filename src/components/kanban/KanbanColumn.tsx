@@ -1,10 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import { Droppable } from '@hello-pangea/dnd';
 import { KanbanCard as KanbanCardType, ColumnId, Priority } from '@/types';
 import { KanbanCard } from './KanbanCard';
 import { AddCardForm } from './AddCardForm';
 import { cn } from '@/lib/utils';
+
+const COLLAPSED_LIMIT = 8;
 
 interface KanbanColumnProps {
   id: ColumnId;
@@ -35,6 +38,10 @@ const columnStyles: Record<ColumnId, { className: string; badge: string; dropBg:
 
 export function KanbanColumn({ id, title, cards, onAddCard, onDeleteCard, onArchiveCard }: KanbanColumnProps) {
   const styles = columnStyles[id];
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const hiddenCount = Math.max(0, cards.length - COLLAPSED_LIMIT);
+  const visibleCards = isExpanded ? cards : cards.slice(0, COLLAPSED_LIMIT);
 
   return (
     <div
@@ -68,7 +75,7 @@ export function KanbanColumn({ id, title, cards, onAddCard, onDeleteCard, onArch
               snapshot.isDraggingOver && styles.dropBg
             )}
           >
-            {cards.map((card, index) => (
+            {visibleCards.map((card, index) => (
               <KanbanCard
                 key={card.id}
                 card={card}
@@ -85,6 +92,32 @@ export function KanbanColumn({ id, title, cards, onAddCard, onDeleteCard, onArch
                   Drop tasks here
                 </p>
               </div>
+            )}
+
+            {hiddenCount > 0 && (
+              <button
+                onClick={() => setIsExpanded(true)}
+                className={cn(
+                  'w-full mt-1 py-2 font-mono text-2xs uppercase tracking-wider',
+                  'text-muted/60 hover:text-muted transition-colors duration-150',
+                  'border border-dashed border-black/10 rounded hover:border-black/20'
+                )}
+              >
+                + {hiddenCount} more
+              </button>
+            )}
+
+            {isExpanded && cards.length > COLLAPSED_LIMIT && (
+              <button
+                onClick={() => setIsExpanded(false)}
+                className={cn(
+                  'w-full mt-1 py-2 font-mono text-2xs uppercase tracking-wider',
+                  'text-muted/60 hover:text-muted transition-colors duration-150',
+                  'border border-dashed border-black/10 rounded hover:border-black/20'
+                )}
+              >
+                Show less
+              </button>
             )}
           </div>
         )}
