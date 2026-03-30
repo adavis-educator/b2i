@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NBA GM — Front Office Simulation</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: SPLASH / START
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-splash" class="screen active">
+    <div class="splash-title">
+      NBA<br/><span id="splash-accent">GM</span>
+    </div>
+    <div class="splash-subtitle">Front Office Simulation</div>
+    <div class="splash-actions">
+      <button class="btn btn-primary" id="btn-new-game">New Game</button>
+      <button class="btn btn-ghost" id="btn-load-game">Load Game</button>
+    </div>
+    <div style="margin-top: 8px;">
+      <button class="btn btn-ghost btn-sm" id="btn-set-api-key">⚙ API Key</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: TEAM SELECTION
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-team-select" class="screen">
+    <div class="team-select-header">
+      <h1>Choose Your Franchise</h1>
+      <p>Every dynasty begins with a decision.</p>
+      <div class="difficulty-legend">
+        <div class="legend-item">
+          <div class="legend-dot contender"></div>
+          <span>Contender — Win now. No excuses.</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot competitive"></div>
+          <span>Competitive — Make the playoffs, then grow.</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot rebuilder"></div>
+          <span>Rebuilder — Low expectations, high reward.</span>
+        </div>
+      </div>
+    </div>
+    <div class="team-grid-container">
+      <div class="team-grid" id="team-grid">
+        <!-- Team cards injected by main.js -->
+      </div>
+    </div>
+    <div style="padding: 16px 40px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center; background: var(--bg-surface);">
+      <button class="btn btn-ghost btn-sm" id="btn-back-to-splash">← Back</button>
+      <div style="flex:1;"></div>
+      <span id="selected-team-label" class="muted mono" style="font-size:11px;letter-spacing:2px;"></span>
+      <button class="btn btn-primary" id="btn-confirm-team" disabled>Select Franchise →</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: GM NAME
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-gm-name" class="screen">
+    <div class="gm-name-card">
+      <div class="team-badge" id="gm-name-abbr" style="color: var(--team-primary);">—</div>
+      <h2>Who Are You?</h2>
+      <p>Enter your name, or leave it blank to remain anonymous.</p>
+      <div class="form-group">
+        <label>GM Name</label>
+        <input type="text" id="input-gm-name" placeholder="General Manager" maxlength="32" />
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+        <button class="btn btn-ghost" id="btn-back-to-teams">← Back</button>
+        <button class="btn btn-primary" id="btn-confirm-gm-name">Enter the War Room →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: OPENING BRIEFING
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-briefing" class="screen">
+    <div class="briefing-card">
+      <div class="briefing-label">CONFIDENTIAL — FROM THE OWNER'S DESK</div>
+      <div class="briefing-title" id="briefing-title">Welcome to the Organization</div>
+      <div class="briefing-body loading" id="briefing-body">
+        <span class="loading-dots">Connecting with ownership</span>
+      </div>
+      <div class="briefing-sig" id="briefing-sig"></div>
+      <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+        <button class="btn btn-primary" id="btn-begin-season" disabled>Begin Season →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: MAIN DASHBOARD
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-dashboard" class="screen">
+
+    <!-- TOP HEADER BAR -->
+    <header id="dash-header">
+      <!-- Team Identity -->
+      <div class="header-team">
+        <div class="header-abbr" id="dash-team-abbr">—</div>
+        <div class="header-meta">
+          <div class="header-season" id="dash-season-label">SEASON 1 · 2024-25</div>
+          <div class="header-phase" id="dash-phase-label">Regular Season</div>
+        </div>
+      </div>
+
+      <!-- Record -->
+      <div class="header-record">
+        <div class="record-wl" id="dash-record">0-0</div>
+        <div class="record-seed" id="dash-seed">—</div>
+      </div>
+
+      <!-- Ownership Pressure Meter -->
+      <div class="header-pressure">
+        <div class="pressure-label">
+          <span>Ownership Pressure</span>
+          <span class="pressure-value" id="pressure-pct">0%</span>
+        </div>
+        <div class="pressure-bar-track">
+          <div class="pressure-bar-fill" id="pressure-bar" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <!-- Sim Controls -->
+      <div class="header-sim-controls">
+        <span class="sim-label">Sim</span>
+        <button class="btn btn-ghost btn-sm" id="btn-sim-1">1</button>
+        <button class="btn btn-ghost btn-sm" id="btn-sim-5">5</button>
+        <button class="btn btn-ghost btn-sm" id="btn-sim-10">10</button>
+        <span class="sim-label" style="margin-left:4px; color: var(--text-muted);" id="games-remaining-label"></span>
+        <button class="btn btn-ghost btn-sm" id="btn-save" style="margin-left: 12px;">💾 Save</button>
+      </div>
+    </header>
+
+    <!-- BODY -->
+    <div id="dash-body">
+
+      <!-- LEFT NAV -->
+      <nav id="dash-nav">
+        <button class="nav-btn active" data-tab="overview">
+          <span class="nav-icon">◈</span><span>Overview</span>
+        </button>
+        <button class="nav-btn" data-tab="roster">
+          <span class="nav-icon">▦</span><span>Roster</span>
+        </button>
+        <div class="nav-divider"></div>
+        <button class="nav-btn" data-tab="standings">
+          <span class="nav-icon">≡</span><span>Standings</span>
+        </button>
+        <button class="nav-btn" data-tab="trade">
+          <span class="nav-icon">⇄</span><span>Trade</span>
+        </button>
+        <button class="nav-btn" data-tab="free-agents">
+          <span class="nav-icon">+</span><span>Free Agents</span>
+        </button>
+        <div class="nav-divider"></div>
+        <button class="nav-btn" data-tab="draft">
+          <span class="nav-icon">◎</span><span>Draft</span>
+        </button>
+        <button class="nav-btn" data-tab="history">
+          <span class="nav-icon">📋</span><span>History</span>
+        </button>
+        <div style="flex: 1;"></div>
+        <div class="nav-divider"></div>
+        <button class="nav-btn" id="btn-settings-nav">
+          <span class="nav-icon">⚙</span><span>Settings</span>
+        </button>
+      </nav>
+
+      <!-- MAIN CONTENT -->
+      <main id="dash-main">
+
+        <!-- ── OVERVIEW TAB ──────────────────────────────────────────────── -->
+        <div class="tab-content active" id="tab-overview">
+          <div class="tab-header">
+            <div class="tab-title" id="overview-team-name">Dashboard</div>
+            <div class="tab-subtitle" id="overview-subtitle">General Manager: —</div>
+          </div>
+
+          <!-- Big stat cards -->
+          <div class="dashboard-overview" style="margin-bottom: 20px;">
+            <div class="overview-stat">
+              <div class="overview-value" id="ov-record">0-0</div>
+              <div class="overview-label">Season Record</div>
+              <div class="overview-detail" id="ov-seed">Conference Seed: —</div>
+            </div>
+            <div class="overview-stat">
+              <div class="overview-value" id="ov-cap">$0M</div>
+              <div class="overview-label">Cap Space Remaining</div>
+              <div class="overview-detail" id="ov-payroll">Payroll: $—</div>
+            </div>
+            <div class="overview-stat">
+              <div class="overview-value" id="ov-pressure" style="color: var(--green);">0</div>
+              <div class="overview-label">Ownership Pressure</div>
+              <div class="overview-detail" id="ov-streak">Streak: —</div>
+            </div>
+          </div>
+
+          <!-- Roster quick view -->
+          <div class="panel" style="margin-bottom: 16px;">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-accent"></div>
+                <div class="panel-title">Top Roster</div>
+              </div>
+              <button class="action-btn" onclick="App.switchTab('roster')">Full Roster →</button>
+            </div>
+            <div class="panel-body" style="padding: 0;">
+              <table class="data-table" id="overview-roster-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Pos</th>
+                    <th class="center">OVR</th>
+                    <th class="right">Salary</th>
+                    <th class="right">Yrs</th>
+                    <th>Morale</th>
+                  </tr>
+                </thead>
+                <tbody id="overview-roster-body">
+                  <tr><td colspan="6" class="empty-state">No roster loaded</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ROSTER TAB ────────────────────────────────────────────────── -->
+        <div class="tab-content" id="tab-roster">
+          <div class="tab-header">
+            <div class="tab-title">Roster</div>
+            <div class="tab-subtitle" id="roster-cap-summary">Loading cap info...</div>
+          </div>
+          <div class="panel">
+            <div class="panel-body" style="padding: 0;">
+              <table class="data-table" id="roster-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Pos</th>
+                    <th>Age</th>
+                    <th class="center">OVR</th>
+                    <th class="center">SCR</th>
+                    <th class="center">PLY</th>
+                    <th class="center">DEF</th>
+                    <th class="center">ATH</th>
+                    <th class="center">IQ</th>
+                    <th class="center">POT</th>
+                    <th class="right">Salary</th>
+                    <th class="center">Yrs</th>
+                    <th>Status</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="roster-body">
+                  <tr><td colspan="14" class="empty-state">No roster loaded</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── STANDINGS TAB ─────────────────────────────────────────────── -->
+        <div class="tab-content" id="tab-standings">
+          <div class="tab-header">
+            <div class="tab-title">League Standings</div>
+            <div class="tab-subtitle" id="standings-subtitle">Season —</div>
+          </div>
+          <div class="standings-container" id="standings-container">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ── TRADE CENTER TAB ──────────────────────────────────────────── -->
+        <div class="tab-content" id="tab-trade">
+          <div class="tab-header">
+            <div class="tab-title">Trade Center</div>
+            <div class="tab-subtitle" id="trade-deadline-label">Trade Deadline: Game 20</div>
+          </div>
+
+          <!-- Incoming offers -->
+          <div class="panel" style="margin-bottom: 16px;" id="incoming-offers-panel">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-accent"></div>
+                <div class="panel-title">Incoming Offers</div>
+              </div>
+            </div>
+            <div class="panel-body" id="incoming-offers-body">
+              <div class="empty-state">No active trade offers</div>
+            </div>
+          </div>
+
+          <!-- Propose trade -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-header-left">
+                <div class="panel-accent"></div>
+                <div class="panel-title">Propose a Trade</div>
+              </div>
+            </div>
+            <div class="panel-body">
+              <!-- Target team select -->
+              <div class="form-group">
+                <label>Target Team</label>
+                <select id="trade-target-team">
+                  <option value="">Select a team...</option>
+                </select>
+              </div>
+
+              <div class="trade-layout" id="trade-layout">
+                <div class="trade-side">
+                  <div class="trade-side-title" id="trade-my-team-label" style="color: var(--team-primary);">Your Offer</div>
+                  <div id="trade-my-players">
+                    <div class="empty-state" style="padding: 16px; font-size: 11px;">Select players to trade away</div>
+                  </div>
+                </div>
+                <div class="trade-middle">
+                  <div class="trade-arrow">⇄</div>
+                  <div id="trade-salary-check" style="font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); text-align: center; padding: 8px;"></div>
+                </div>
+                <div class="trade-side">
+                  <div class="trade-side-title" id="trade-their-team-label" style="color: var(--text-secondary);">Requesting</div>
+                  <div id="trade-their-players">
+                    <div class="empty-state" style="padding: 16px; font-size: 11px;">Select players to receive</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="margin-top: 16px; display: flex; gap: 10px; align-items: center;">
+                <button class="btn btn-primary" id="btn-propose-trade">Propose Trade →</button>
+                <div id="trade-ai-status" class="muted mono" style="font-size: 11px; display: none;">
+                  <span class="loading-dots">Waiting on the other GM</span>
+                </div>
+              </div>
+
+              <!-- AI trade response -->
+              <div id="trade-response" class="hidden" style="margin-top: 16px; background: var(--bg-surface); border: 1px solid var(--border); border-left: 3px solid var(--team-primary); border-radius: var(--radius); padding: 16px;">
+                <div class="briefing-label" style="margin-bottom: 8px;">GM RESPONSE</div>
+                <div id="trade-response-text" style="font-size: 13px; line-height: 1.7; color: var(--text-secondary);"></div>
+                <div id="trade-response-actions" style="margin-top: 12px; display: flex; gap: 8px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── FREE AGENTS TAB ───────────────────────────────────────────── -->
+        <div class="tab-content" id="tab-free-agents">
+          <div class="tab-header">
+            <div class="tab-title">Free Agents</div>
+            <div class="tab-subtitle" id="fa-cap-label">Cap space: loading...</div>
+          </div>
+          <div class="panel">
+            <div class="panel-body" style="padding: 0;">
+              <table class="data-table" id="fa-table">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Pos</th>
+                    <th>Age</th>
+                    <th class="center">OVR</th>
+                    <th class="right">Asking ($M)</th>
+                    <th class="right">Yrs</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="fa-body">
+                  <tr><td colspan="7" class="empty-state">No free agents available during regular season</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── DRAFT ROOM TAB ────────────────────────────────────────────── -->
+        <div class="tab-content" id="tab-draft">
+          <div class="tab-header">
+            <div class="tab-title">Draft Room</div>
+            <div class="tab-subtitle" id="draft-pick-label">Your projected pick: —</div>
+          </div>
+
+          <!-- Scouting actions remaining -->
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+            <div class="panel" style="padding: 12px 20px; display: inline-flex; align-items: center; gap: 10px; border-radius: var(--radius-lg);">
+              <span class="panel-title">Scouting Actions</span>
+              <span class="accent mono" style="font-size: 18px; font-weight: 700;" id="scouting-actions-left">5</span>
+              <span class="muted mono" style="font-size: 11px;">remaining</span>
+            </div>
+            <span class="muted" style="font-size: 12px;">Click a prospect to spend a scouting action and reveal their full profile</span>
+          </div>
+
+          <div class="prospect-grid" id="prospect-grid">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- ── HISTORY TAB ───────────────────────────────────────────────── -->
+        <div class="tab-content" id="tab-history">
+          <div class="tab-header">
+            <div class="tab-title">History</div>
+            <div class="tab-subtitle">Your franchise's journey</div>
+          </div>
+
+          <div id="history-seasons">
+            <div class="empty-state">No seasons completed yet</div>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <div class="tab-title" style="font-size: 20px; margin-bottom: 12px;">Trade History</div>
+            <div id="history-trades">
+              <div class="empty-state">No trades completed yet</div>
+            </div>
+          </div>
+        </div>
+
+      </main><!-- /#dash-main -->
+
+      <!-- RIGHT SIDEBAR (persistent panels) -->
+      <aside id="dash-sidebar">
+
+        <!-- Game Log -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-accent"></div>
+              <div class="panel-title">Game Log</div>
+            </div>
+          </div>
+          <div class="panel-body" id="game-log-body">
+            <div class="empty-state" style="font-size: 10px; padding: 16px 0;">Season hasn't started</div>
+          </div>
+        </div>
+
+        <!-- Injury Report -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-accent"></div>
+              <div class="panel-title">Injury Report</div>
+            </div>
+          </div>
+          <div class="panel-body" id="injury-report-body">
+            <div class="empty-state" style="font-size: 10px; padding: 8px 0;">All players healthy</div>
+          </div>
+        </div>
+
+        <!-- League Leaders -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-accent"></div>
+              <div class="panel-title">League Leaders</div>
+            </div>
+          </div>
+          <div class="leaders-tabs">
+            <div class="leaders-tab active" data-stat="ppg">PPG</div>
+            <div class="leaders-tab" data-stat="rpg">RPG</div>
+            <div class="leaders-tab" data-stat="apg">APG</div>
+          </div>
+          <div class="leaders-list" id="leaders-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Salary Cap -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-accent"></div>
+              <div class="panel-title">Salary Cap</div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="cap-bar-container">
+              <div class="cap-bar-labels">
+                <span id="sidebar-payroll-label">$0M</span>
+                <span>$140M Cap</span>
+              </div>
+              <div class="cap-bar-track">
+                <div class="cap-bar-fill" id="cap-bar" style="width: 0%;"></div>
+                <div class="cap-threshold-marker" id="luxury-marker" style="left: 0%;"></div>
+              </div>
+            </div>
+            <div class="cap-space-label" id="cap-space-sidebar">Cap Space: $140M</div>
+          </div>
+        </div>
+
+        <!-- Draft Board -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-header-left">
+              <div class="panel-accent"></div>
+              <div class="panel-title">Draft Board</div>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="pick-position">
+              <div class="pick-num" id="sidebar-pick-num">—</div>
+              <div class="pick-info">
+                <div class="pick-label">Projected Pick</div>
+                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;" id="sidebar-pick-detail">Updates with standings</div>
+              </div>
+            </div>
+            <div id="sidebar-pick-assets" style="margin-top: 10px; font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);">
+              <!-- Future picks owned -->
+            </div>
+          </div>
+        </div>
+
+      </aside><!-- /#dash-sidebar -->
+    </div><!-- /#dash-body -->
+  </div><!-- /#screen-dashboard -->
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: LOAD GAME
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-load" class="screen">
+    <div style="text-align: center; margin-bottom: 24px;">
+      <div class="splash-title" style="font-size: 48px;">Load Game</div>
+    </div>
+    <div id="save-slots-list" style="display: flex; flex-direction: column; gap: 10px;">
+      <!-- Populated by JS -->
+    </div>
+    <button class="btn btn-ghost" id="btn-back-from-load" style="margin-top: 16px;">← Back</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: CHAMPION
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-champion" class="screen">
+    <div class="champion-title" id="champion-title">CHAMPIONS</div>
+    <div style="font-family: var(--font-display); font-size: 28px; letter-spacing: 4px; color: var(--text-secondary);" id="champion-team-name"></div>
+    <div id="champion-narrative" style="max-width: 600px; text-align: center; color: var(--text-secondary); line-height: 1.8; font-size: 15px;"></div>
+    <button class="btn btn-primary" id="btn-next-season" style="margin-top: 20px;">Begin Next Season →</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: FIRED / GAME OVER
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-fired" class="screen">
+    <div class="fired-title">FIRED.</div>
+    <div id="fired-narrative" style="max-width: 600px; text-align: center; color: var(--text-secondary); line-height: 1.8; font-size: 15px; margin-top: 8px;"></div>
+    <div id="fired-stats" style="margin-top: 20px; font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); text-align: center;"></div>
+    <button class="btn btn-ghost" id="btn-new-game-from-fired" style="margin-top: 24px;">Start Over</button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       OVERLAY: BREAKING EVENT
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="overlay-event" class="hidden">
+    <div class="event-card">
+      <div class="breaking-label">
+        <div class="breaking-pulse"></div>
+        BREAKING
+      </div>
+      <div class="event-narrative" id="event-narrative-text">Loading...</div>
+      <div class="event-choices" id="event-choices-container">
+        <!-- Choice buttons injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       OVERLAY: WEEKLY PULSE
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="overlay-pulse" class="hidden">
+    <div class="pulse-title">WEEKLY PULSE — WEEK <span id="pulse-week-num">1</span></div>
+    <div class="pulse-items" id="pulse-items-container"></div>
+    <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+      <button class="btn btn-ghost btn-sm" id="btn-dismiss-pulse">Dismiss</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       OVERLAY: API KEY SETUP
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="overlay-api-key" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(4px);">
+    <div class="gm-name-card" style="width: 520px;">
+      <h2>Anthropic API Key</h2>
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">
+        The AI features (events, scouting reports, trade responses) require an Anthropic API key.
+        Your key is stored locally and never sent anywhere except Anthropic's servers.
+        The game works without a key — AI features will use placeholder responses.
+      </p>
+      <div class="form-group">
+        <label>Anthropic API Key (optional)</label>
+        <input type="password" id="input-api-key" placeholder="sk-ant-..." />
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-top: 8px;">
+        <button class="btn btn-ghost" id="btn-cancel-api-key">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-api-key">Save Key</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       OVERLAY: SAVE GAME MODAL
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="overlay-save" class="hidden" style="position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(4px);">
+    <div class="gm-name-card" style="width: 420px;">
+      <h2>Save Game</h2>
+      <p>Choose a save slot</p>
+      <div id="save-modal-slots" style="margin: 20px 0; display: flex; flex-direction: column; gap: 8px;"></div>
+      <div style="display: flex; gap: 10px; justify-content: center;">
+        <button class="btn btn-ghost" id="btn-cancel-save">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Data Layer ───────────────────────────────────────────────────────── -->
+  <script src="data/teams.js"></script>
+  <script src="data/players.js"></script>
+  <script src="data/draft-prospects.js"></script>
+
+  <!-- ─── Game Engine ──────────────────────────────────────────────────────── -->
+  <script src="js/game-state.js"></script>
+
+  <!-- ─── UI / Application ─────────────────────────────────────────────────── -->
+  <script src="js/main.js"></script>
+</body>
+</html>
