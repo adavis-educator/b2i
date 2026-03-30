@@ -615,6 +615,134 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: PLAYOFFS
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-playoffs" class="screen">
+    <div class="playoffs-layout">
+
+      <!-- Top bar -->
+      <div class="playoffs-header">
+        <div class="playoffs-round-label" id="playoff-round-label">PLAYOFFS</div>
+        <div class="playoffs-tagline">Every game matters. Build a legacy.</div>
+      </div>
+
+      <!-- Full bracket -->
+      <div class="playoffs-bracket-wrap">
+        <div id="playoff-bracket" class="playoff-bracket">
+          <!-- Rendered by Phases.renderBracketFull() -->
+        </div>
+      </div>
+
+      <!-- Active series view (shown when user's team is playing) -->
+      <div id="playoff-series-view" class="playoff-series-view hidden">
+        <!-- Rendered by Phases.renderSeriesView() -->
+      </div>
+
+      <!-- Continue button (shown after missed playoffs) -->
+      <div style="display:none; justify-content:center; margin-top:20px;" id="playoff-continue-wrap">
+        <button class="btn btn-ghost" id="btn-playoff-continue">Begin Offseason →</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: OFFSEASON
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-offseason" class="screen">
+    <div class="offseason-layout">
+
+      <!-- Header -->
+      <div class="offseason-header">
+        <div class="offseason-title" id="offseason-title">OFFSEASON</div>
+        <div class="offseason-subtitle">Rebuild. Reload. Return.</div>
+      </div>
+
+      <!-- Tab nav -->
+      <div class="offseason-tabs">
+        <div class="os-tab active" id="os-tab-development" data-panel="development">
+          <span class="os-tab-num">01</span>
+          <span>Development</span>
+        </div>
+        <div class="os-tab" id="os-tab-free-agency" data-panel="free-agency">
+          <span class="os-tab-num">02</span>
+          <span>Free Agency</span>
+        </div>
+        <div class="os-tab" id="os-tab-summary" data-panel="summary">
+          <span class="os-tab-num">03</span>
+          <span>Summary</span>
+        </div>
+      </div>
+
+      <!-- Panels -->
+      <div class="offseason-panels">
+        <div class="os-panel active" id="os-panel-development">
+          <div class="empty-state">Loading development results...</div>
+        </div>
+        <div class="os-panel" id="os-panel-free-agency">
+          <div class="empty-state">Waiting for free agency to open...</div>
+        </div>
+        <div class="os-panel" id="os-panel-summary">
+          <div class="empty-state">Offseason summary will appear here.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       SCREEN: DRAFT DAY
+  ═══════════════════════════════════════════════════════════════════════════ -->
+  <div id="screen-draft-day" class="screen">
+    <div class="draft-day-layout">
+
+      <!-- Header bar -->
+      <div class="draft-day-header">
+        <div class="draft-day-title">NBA DRAFT</div>
+        <div class="draft-day-meta">
+          <span id="dd-pick-position" class="draft-your-pick">Your pick: —</span>
+          <span class="draft-sep">·</span>
+          <span class="muted mono" style="font-size:11px;">
+            Scouting actions remaining:
+            <span id="dd-scouting-left" style="color:var(--team-primary);font-weight:700;">0</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- User's turn banner (hidden until it's your pick) -->
+      <div id="dd-user-turn-banner" style="display:none;">
+        <!-- Injected by phases.js -->
+      </div>
+
+      <!-- Main split layout -->
+      <div class="draft-day-body">
+
+        <!-- Left: Draft board (available prospects) -->
+        <div class="draft-board-col">
+          <div id="dd-draft-board">
+            <div class="empty-state" style="padding:24px 0;">Loading draft class...</div>
+          </div>
+        </div>
+
+        <!-- Right: Live ticker (picks made) -->
+        <div class="draft-ticker-col">
+          <div class="draft-ticker-label">LIVE PICKS</div>
+          <div id="dd-ticker" class="draft-ticker">
+            <!-- Entries injected by phases.js -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Continue to next season button (appears after user pick) -->
+      <div id="dd-continue-btn" style="display:none; justify-content:center; padding:20px 0;">
+        <button class="btn btn-primary">Begin Next Season →</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ─── Data Layer ───────────────────────────────────────────────────────── -->
   <script src="data/teams.js"></script>
   <script src="data/players.js"></script>
@@ -625,5 +753,6 @@
 
   <!-- ─── UI / Application ─────────────────────────────────────────────────── -->
   <script src="js/main.js"></script>
+  <script src="js/phases.js"></script>
 </body>
 </html>

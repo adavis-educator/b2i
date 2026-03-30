@@ -15,7 +15,8 @@ const App = (() => {
   // ─── SCREEN MANAGEMENT ────────────────────────────────────────────────────
   const SCREENS = ['screen-splash', 'screen-team-select', 'screen-gm-name',
                    'screen-briefing', 'screen-dashboard', 'screen-load',
-                   'screen-champion', 'screen-fired'];
+                   'screen-champion', 'screen-fired',
+                   'screen-playoffs', 'screen-offseason', 'screen-draft-day'];
 
   function showScreen(id) {
     SCREENS.forEach(s => {
@@ -792,23 +793,15 @@ const App = (() => {
 
   // ─── END OF SEASON ────────────────────────────────────────────────────────
   async function showEndOfSeasonFlow() {
-    const state = GameState.getState();
-    // Simple determination: top 6 per conference make playoffs
-    const eastStandings = GameState.getConferenceStandings('East');
-    const westStandings = GameState.getConferenceStandings('West');
-    const myTeam = state.meta.teamId;
-    const myConf = NBA_TEAMS[myTeam].conference;
-    const confStandings = myConf === 'East' ? eastStandings : westStandings;
-    const mySeed = confStandings.findIndex(t => t.teamId === myTeam) + 1;
+    simulationLocked = true;
+    setSimButtonsDisabled(true);
+    GameState.getState().meta.phase = 'playoffs';
 
-    let result = 'missed_playoffs';
-    if (mySeed <= 6) {
-      // Simulate playoff run (simplified)
-      result = simulatePlayoffRun(mySeed);
-    }
+    // Run the full interactive playoff bracket via Phases
+    const result = await Phases.runPlayoffs();
 
     // Show exit interview
-    const ctx = { ...GameState.getEventContext(), seasonResult: result, seed: mySeed };
+    const ctx = { ...GameState.getEventContext(), seasonResult: result };
     const exitInterview = await ClaudeAPI.generateExitInterview(ctx);
 
     if (result === 'champion') {
@@ -816,31 +809,15 @@ const App = (() => {
       showChampionScreen(narrative);
     } else {
       GameState.endOfSeasonPressureAdjust(result);
-      await showEventOverlay('EXIT INTERVIEW — ' + result.replace('_', ' ').toUpperCase(),
+      await showEventOverlay('EXIT INTERVIEW — ' + result.replace(/_/g, ' ').toUpperCase(),
         exitInterview, ['Begin Offseason'], () => {});
 
       if (GameState.getState().meta.phase === 'fired') {
         await showFiredScreen();
       } else {
-        beginOffseason();
+        await Phases.runOffseason(result);
       }
     }
-  }
-
-  function simulatePlayoffRun(seed) {
-    // Simple probability-based playoff simulation
-    const winProbs = { 1: 0.70, 2: 0.65, 3: 0.58, 4: 0.52, 5: 0.46, 6: 0.40 };
-    const winProb = winProbs[seed] || 0.45;
-
-    // First round
-    if (Math.random() > winProb + 0.05) return 'first_round';
-    // Semis
-    if (Math.random() > winProb) return 'conf_semis';
-    // Conf finals
-    if (Math.random() > winProb - 0.05) return 'conf_finals';
-    // Finals
-    if (Math.random() > 0.50) return 'finalist';
-    return 'champion';
   }
 
   function showChampionScreen(narrative) {
@@ -864,26 +841,8 @@ const App = (() => {
   }
 
   // ─── OFFSEASON FLOW ───────────────────────────────────────────────────────
-  function beginOffseason() {
-    GameState.startOffseason();
-    const narratives = GameState.applyOffseasonDevelopment();
-
-    // Show development stories
-    if (narratives.length) {
-      const body = narratives.map(n => `▸ ${n}`).join('\n\n');
-      showEventOverlay('OFFSEASON DEVELOPMENT', body, ['Continue to Free Agency'], () => {
-        GameState.getState().meta.phase = 'regular_season';
-        GameState.getState()._warningShown = false;
-        GameState.getState()._pressConferenceShown = false;
-        refreshDashboard();
-        switchTab('overview');
-      });
-    } else {
-      GameState.getState().meta.phase = 'regular_season';
-      GameState.getState()._warningShown = false;
-      GameState.getState()._pressConferenceShown = false;
-      refreshDashboard();
-    }
+  async function beginOffseason() {
+    await Phases.runOffseason('champion');
   }
 
   // ─── SCOUTING ─────────────────────────────────────────────────────────────
@@ -1275,8 +1234,6 @@ const App = (() => {
     // Champion → next season
     document.getElementById('btn-next-season').addEventListener('click', () => {
       beginOffseason();
-      showScreen('screen-dashboard');
-      refreshDashboard();
     });
 
     // Fired → new game
@@ -1401,6 +1358,9 @@ const App = (() => {
     toggleMyPlayer,
     toggleTheirPlayer,
     refreshDashboard,
+    // Phase 2 public methods used by phases.js
+    showScreenPublic: (id) => showScreen(id),
+    showEventOverlayPublic: (headline, body, choices, onChoice) => showEventOverlay(headline, body, choices, onChoice),
   };
 })();
 
@@ -1621,6 +1581,35 @@ BOTTOM LINE: [one sentence on draft value]`;
     return result || `${ctx.gmName},\n\nAfter careful consideration, I've decided to make a change in our front office leadership. Your contributions to this franchise were not without merit, but the results ultimately fell short of what our fans and organization deserve. I wish you the very best in your future endeavors.\n\nThank you for your service.`;
   }
 
+  // ── Playoff Decision ──────────────────────────────────────────────────────
+  async function generatePlayoffDecision(ctx, oppName, series) {
+    const myW = series.aW;
+    const oppW = series.bW;
+    const sys = `You are covering the ${ctx.teamName} in the playoffs. It's between games in a series vs ${oppName} (series: ${myW}-${oppW}). Write a 60-word pregame situation requiring a GM adjustment, then give 3 options. Format: SITUATION: [text] OPTION A: [text] OPTION B: [text] OPTION C: [text]`;
+    const user = ctxSummary(ctx);
+    const result = await call(sys, user);
+    if (result) {
+      const situation = result.match(/SITUATION: (.+?)(?=OPTION|$)/is)?.[1]?.trim() || '';
+      const choices = ['A', 'B', 'C'].map(l =>
+        result.match(new RegExp(`OPTION ${l}: (.+?)(?=OPTION|$)`, 'is'))?.[1]?.trim() || ''
+      ).filter(Boolean);
+      if (situation && choices.length) return { situation, choices };
+    }
+    return {
+      situation: `Heading into Game ${myW + oppW + 1} vs the ${oppName}. Your coaching staff has identified some adjustments.`,
+      choices: ['Push the tempo — attack their tired bigs', 'Slow the pace, grind them down defensively', 'No changes — trust the current rotation'],
+    };
+  }
+
+  // ── Draft Pick Note ───────────────────────────────────────────────────────
+  async function generateDraftPickNote(prospect, teamId, pick) {
+    const teamName = NBA_TEAMS[teamId]?.fullName || teamId;
+    const sys = `You are an NBA draft analyst. Write a single 8-12 word observation on why ${teamName} selected ${prospect.name} at pick #${pick}. No quotes, no punctuation at end.`;
+    const user = `${prospect.name}, ${prospect.pos}, ${prospect.school}`;
+    const result = await call(sys, user);
+    return result?.trim() || `${teamName} adds depth with this selection`;
+  }
+
   return {
     generateOwnerMemo,
     generateWeeklyPulse,
@@ -1632,6 +1621,8 @@ BOTTOM LINE: [one sentence on draft value]`;
     generateOwnerWarning,
     generatePressConference,
     generateFiredLetter,
+    generatePlayoffDecision,
+    generateDraftPickNote,
   };
 })();
 

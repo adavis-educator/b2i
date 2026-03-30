@@ -1569,3 +1569,517 @@ label {
   #dash-nav { width: 48px; }
   .nav-btn span:not(.nav-icon) { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PHASE 2 — PLAYOFFS · OFFSEASON · DRAFT DAY
+═══════════════════════════════════════════════════════════════════════════ */
+
+/* ─── PLAYOFFS SCREEN ───────────────────────────────────────────────────── */
+#screen-playoffs {
+  flex-direction: column;
+  background: var(--bg-base);
+  overflow-y: auto;
+}
+
+.playoffs-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 0 0 40px;
+}
+
+.playoffs-header {
+  padding: 28px 40px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.playoffs-round-label {
+  font-family: var(--font-display);
+  font-size: 42px;
+  letter-spacing: 6px;
+  color: var(--team-primary);
+  line-height: 1;
+}
+
+.playoffs-tagline {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-top: 6px;
+}
+
+.playoffs-bracket-wrap {
+  padding: 28px 24px 0;
+  overflow-x: auto;
+}
+
+.playoff-bracket {
+  min-width: 900px;
+}
+
+/* Bracket grid */
+.bracket-layout {
+  display: grid;
+  grid-template-columns: 1fr 220px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.bracket-conf-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bracket-conf-right {
+  direction: rtl;
+}
+
+.bracket-conf-right .bracket-round-col {
+  direction: ltr;
+}
+
+.bracket-conf-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.bracket-round-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bracket-finals-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  gap: 8px;
+}
+
+.bracket-finals-col .bracket-conf-label {
+  font-size: 11px;
+  color: var(--yellow);
+  letter-spacing: 2px;
+}
+
+.bracket-matchup {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  min-width: 160px;
+}
+
+.bracket-matchup.bracket-mine {
+  border-color: var(--team-primary);
+  box-shadow: 0 0 12px var(--team-glow);
+}
+
+.bracket-matchup.bracket-done {
+  opacity: 0.75;
+}
+
+.bracket-matchup.bracket-tbd {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-align: center;
+  padding: 10px;
+}
+
+.bracket-team {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.bracket-team:last-child { border-bottom: none; }
+
+.bracket-team.bw { opacity: 1; }
+.bracket-team.bl { opacity: 0.4; }
+
+.b-wl {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-stat);
+}
+
+/* ─── SERIES VIEW ────────────────────────────────────────────────────────── */
+.playoff-series-view {
+  margin: 24px 40px 0;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--team-primary);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+}
+
+.series-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.series-team-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.series-abbr {
+  font-family: var(--font-display);
+  font-size: 36px;
+  letter-spacing: 3px;
+  line-height: 1;
+}
+
+.series-wins {
+  font-family: var(--font-display);
+  font-size: 48px;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.series-vs {
+  text-align: center;
+}
+
+.series-games {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.series-game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  min-width: 60px;
+  gap: 2px;
+}
+
+.series-game.sg-win { border-color: var(--green); }
+.series-game.sg-loss { border-color: var(--border); }
+
+.sg-num {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+.sg-score {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-stat);
+  font-weight: 600;
+}
+
+.sg-result {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.sg-result.positive { color: var(--green); }
+.sg-result.negative { color: var(--text-muted); }
+
+/* ─── OFFSEASON SCREEN ───────────────────────────────────────────────────── */
+#screen-offseason {
+  flex-direction: column;
+  background: var(--bg-base);
+  overflow-y: auto;
+}
+
+.offseason-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.offseason-header {
+  padding: 28px 40px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.offseason-title {
+  font-family: var(--font-display);
+  font-size: 42px;
+  letter-spacing: 6px;
+  color: var(--team-primary);
+}
+
+.offseason-subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 2px;
+  margin-top: 6px;
+}
+
+.offseason-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.os-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  cursor: default;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s;
+  text-transform: uppercase;
+}
+
+.os-tab.active {
+  color: var(--team-primary);
+  border-bottom-color: var(--team-primary);
+}
+
+.os-tab-num {
+  font-size: 9px;
+  opacity: 0.5;
+}
+
+.offseason-panels {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.os-panel {
+  display: none;
+  padding: 28px 40px;
+}
+
+.os-panel.active {
+  display: block;
+}
+
+/* ─── DRAFT DAY SCREEN ───────────────────────────────────────────────────── */
+#screen-draft-day {
+  flex-direction: column;
+  background: var(--bg-base);
+  overflow: hidden;
+}
+
+.draft-day-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.draft-day-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 28px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.draft-day-title {
+  font-family: var(--font-display);
+  font-size: 32px;
+  letter-spacing: 5px;
+  color: var(--team-primary);
+}
+
+.draft-day-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.draft-your-pick {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.draft-sep { color: var(--border); }
+
+.draft-day-body {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+}
+
+.draft-board-col {
+  overflow-y: auto;
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+}
+
+.draft-ticker-col {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.draft-ticker-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-muted);
+  padding: 12px 16px 8px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.draft-ticker {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.ticker-entry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  animation: slideInRight 0.2s ease;
+}
+
+.ticker-entry:last-child { border-bottom: none; }
+
+.ticker-entry.ticker-mine {
+  background: var(--team-glow);
+  border-left: 2px solid var(--team-primary);
+}
+
+.ticker-pick {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+  width: 28px;
+  flex-shrink: 0;
+}
+
+.ticker-team {
+  font-family: var(--font-display);
+  font-size: 13px;
+  letter-spacing: 1px;
+  width: 36px;
+  flex-shrink: 0;
+}
+
+.ticker-name {
+  flex: 1;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ticker-pos {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.ticker-note {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--team-primary);
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Draft board rows */
+.draft-board-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.draft-board-row:last-child { border-bottom: none; }
+
+.draft-board-row-selectable {
+  cursor: pointer;
+}
+
+.draft-board-row-selectable:hover {
+  background: var(--team-glow);
+}
+
+/* History result badges */
+.history-season {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-season:last-child { border-bottom: none; }
+
+.history-season-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  width: 48px;
+}
+
+.history-result-badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.history-result-badge.champion {
+  color: var(--yellow);
+  border-color: var(--yellow);
+  background: rgba(253,187,39,0.08);
+}
+
+.history-result-badge.playoffs {
+  color: var(--green);
+  border-color: var(--green);
+  background: rgba(53,195,110,0.06);
+}
+
+.history-result-badge.missed {
+  color: var(--red);
+  border-color: var(--red);
+}
