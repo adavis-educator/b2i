@@ -7,8 +7,8 @@ const GameState = (() => {
   const SALARY_CAP = 140;
   const LUXURY_TAX = 165;
   const HARD_CAP = 185;
-  const GAMES_PER_SEASON = 40;
-  const TRADE_DEADLINE_GAME = 20;
+  const GAMES_PER_SEASON = 82;
+  const TRADE_DEADLINE_GAME = 41;
 
   const SEASON_PHASES = ['offseason', 'draft', 'training_camp', 'regular_season', 'playoffs'];
 
