@@ -595,12 +595,11 @@ const App = (() => {
     if (simulationLocked) return;
     const state = GameState.getState();
 
-    if (state.meta.phase !== 'regular_season') {
-      if (state.meta.phase === 'offseason' || state.meta.phase === 'training_camp') {
-        alert('Start the regular season first from the offseason screen.');
-        return;
-      }
+    if (state.meta.phase === 'offseason' || state.meta.phase === 'training_camp') {
+      alert('Start the regular season first from the offseason screen.');
+      return;
     }
+    if (state.meta.phase !== 'regular_season') return;
 
     const remaining = GameState.GAMES_PER_SEASON - state.meta.gamesPlayed;
     const toSim = Math.min(count, remaining);
@@ -612,54 +611,54 @@ const App = (() => {
     simulationLocked = true;
     setSimButtonsDisabled(true);
 
-    const results = GameState.simulateWeek(toSim);
+    try {
+      GameState.simulateWeek(toSim);
+      GameState.checkForInjury();
 
-    // Animate results briefly
-    refreshDashboard();
-    switchTab('overview');
+      refreshDashboard();
+      switchTab('overview');
 
-    // Check for injury
-    const injury = GameState.checkForInjury();
-    if (injury) {
-      // Will show in injury panel on next refresh
+      // Show weekly pulse (non-blocking — just fires and continues)
+      if (GameState.getState().meta.week % 3 === 0) {
+        showWeeklyPulse(); // no await — pulse is informational, doesn't block sim
+      }
+
+      // Check if season over
+      if (GameState.getState().meta.phase === 'playoffs' ||
+          GameState.getState().meta.gamesPlayed >= GameState.GAMES_PER_SEASON) {
+        showEndOfSeasonFlow();
+        return;
+      }
+
+      // Pressure events
+      const pressure = GameState.getPressure();
+      const st = GameState.getState();
+      if (pressure >= 90 && !st._pressConferenceShown) {
+        st._pressConferenceShown = true;
+        await showPressConference();
+      } else if (pressure >= 75 && !st._warningShown) {
+        st._warningShown = true;
+        await showOwnerWarning();
+      }
+
+      // AI event (10% chance — less frequent, more meaningful)
+      if (GameState.shouldFireEvent()) {
+        await showAIEvent();
+      }
+
+      // Check fired
+      if (GameState.getState().meta.phase === 'fired') {
+        await showFiredScreen();
+        return;
+      }
+
+      refreshDashboard();
+    } catch (e) {
+      console.error('Simulation error:', e);
+    } finally {
+      simulationLocked = false;
+      setSimButtonsDisabled(false);
     }
-
-    // Check for AI event
-    if (GameState.shouldFireEvent()) {
-      simulationLocked = true;
-      await showAIEvent();
-    }
-
-    // Weekly pulse every ~5 games
-    if (state.meta.week % 2 === 0) {
-      await showWeeklyPulse();
-    }
-
-    // Check if season over
-    if (GameState.getState().meta.phase === 'playoffs' ||
-        GameState.getState().meta.gamesPlayed >= GameState.GAMES_PER_SEASON) {
-      showEndOfSeasonFlow();
-    }
-
-    // Check pressure-triggered events
-    const pressure = GameState.getPressure();
-    if (pressure >= 90 && !state._pressConferenceShown) {
-      GameState.getState()._pressConferenceShown = true;
-      await showPressConference();
-    } else if (pressure >= 75 && !state._warningShown) {
-      GameState.getState()._warningShown = true;
-      await showOwnerWarning();
-    }
-
-    // Check fired
-    if (GameState.getState().meta.phase === 'fired') {
-      await showFiredScreen();
-      return;
-    }
-
-    refreshDashboard();
-    simulationLocked = false;
-    setSimButtonsDisabled(false);
   }
 
   function setSimButtonsDisabled(disabled) {

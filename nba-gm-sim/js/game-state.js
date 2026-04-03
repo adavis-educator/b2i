@@ -353,13 +353,15 @@ const GameState = (() => {
 
   // ─── TRADE SYSTEM ──────────────────────────────────────────────────────────
   function checkSalaryMatch(outgoing, incoming) {
+    // Simplified rules: salaries just can't be more than 3x apart
     const outSalary = outgoing.reduce((s, p) => s + (p.salary || 0), 0);
     const inSalary = incoming.reduce((s, p) => s + (p.salary || 0), 0);
-    const luxuryMultiplier = isOverLuxuryTax() ? 1.10 : 1.25;
-    const maxOut = inSalary * luxuryMultiplier + 0.1;
-    if (outSalary > maxOut) return { valid: false, reason: `Salary mismatch. Sending out $${outSalary.toFixed(1)}M but can only send $${maxOut.toFixed(1)}M` };
-    const newTotal = getTotalSalary() - outSalary + inSalary;
-    if (newTotal > HARD_CAP) return { valid: false, reason: `Trade would exceed hard cap ($${HARD_CAP}M)` };
+    if (outSalary === 0 && inSalary === 0) return { valid: true };
+    const higher = Math.max(outSalary, inSalary);
+    const lower = Math.min(outSalary, inSalary);
+    if (lower > 0 && higher / lower > 3) {
+      return { valid: false, reason: `Too lopsided — sending $${outSalary.toFixed(1)}M for $${inSalary.toFixed(1)}M. Try adding another player to balance it.` };
+    }
     return { valid: true };
   }
 
@@ -673,10 +675,10 @@ const GameState = (() => {
     const pressure = state.ownershipPressure;
     const isDeadlineZone = state.meta.gamesPlayed >= 15 && state.meta.gamesPlayed <= 22;
 
-    let baseProb = 0.20;
-    if (pressure > 60) baseProb += 0.10;
-    if (state.team.streak <= -4) baseProb += 0.10;
-    if (isDeadlineZone) baseProb += 0.15;
+    let baseProb = 0.10;
+    if (pressure > 60) baseProb += 0.05;
+    if (state.team.streak <= -4) baseProb += 0.05;
+    if (isDeadlineZone) baseProb += 0.10;
 
     return Math.random() < baseProb;
   }

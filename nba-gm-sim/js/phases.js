@@ -573,7 +573,7 @@ const Phases = (() => {
         </div>
       </div>`;
 
-    renderDraftBoard(draftClass, userPickNum, async (prospect) => {
+    renderDraftBoardWithCallback(draftClass, userPickNum, async (prospect) => {
       document.getElementById('dd-user-turn-banner').style.display = 'none';
       const newPlayer = GameState.draftPlayer(prospect.id, pick);
       draftLog.push({ pick, team: GameState.getState().meta.teamId, prospect, note: 'YOUR PICK', userPick: true });
