@@ -64,7 +64,7 @@ export function useChecklistSupabase() {
 
         const { data: newData, error: insertError } = await supabase
           .from('checklist_items')
-          .insert(defaultInserts)
+          .upsert(defaultInserts, { onConflict: 'user_id,label', ignoreDuplicates: true })
           .select();
 
         if (insertError) {
